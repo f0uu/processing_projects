@@ -1,44 +1,32 @@
-ArrayList<Circle> circles;
-PImage img;
+System circles;
+int current = 0;
+PImage[] imgs;
+
 
 void setup() {
   size(800, 580);
-  circles = new ArrayList<Circle>();
-  img = loadImage("cube.jpg");
+  circles = new System();
+
+  imgs = new PImage[5];
+  imgs[0] = loadImage("cube.jpg");
+  imgs[1] = loadImage("plant.jpg");
+  imgs[2] = loadImage("pad.jpg");
+  imgs[3] = loadImage("mercedes.jpg");
+  imgs[4] = loadImage("art.jpg");
 }
 
 void draw() {
   background(255);
 
 
-  if (circles.size() < 10000) {
-    for (int i = 0; i < 20; i++) {
-      Circle c = addCircle();
-      if (c != null) circles.add(c);
-    }
-  }
+  if (circles.destroying) circles.destroy();
+  else circles.adding(imgs[current]);
 
-  for (Circle circle : circles) {
-    circle.check(circles);
-    circle.update();
-    circle.show();
-  }
-}
+  circles.run();
 
-Circle addCircle() {
-  int x = int(random(width));
-  int y = int(random(height));
-
-  for (Circle c : circles) {
-    float d = dist(c.pos.x, c.pos.y, x, y);
-    if (d < c.r) {
-      addCircle();
-      return null;
-    }
+  if (circles.isDestroyed()) {
+    if(current < 4) current++;
+    else current = 0;
+    circles.destroying = false;
   }
-  img.loadPixels();
-  int index = x + y * width;
-  color c = img.pixels[index];
-  img.updatePixels();
-  return new Circle(x, y, c);
 }
